@@ -1,167 +1,245 @@
-<!-- <!DOCTYPE html>
-<html> -->
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Playground</title>
 
-    <!-- <script src="https://unpkg.com/@tailwindcss/browser@4"></script> -->
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script> -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"
+    />
+    <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
-    <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/sidebars.css" rel="stylesheet" />
+    <link href="css/custom.css" rel="stylesheet" />
 
-    <style>
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
-        }
+    <script src="js/qrcode.min.js"></script>
+  </head>
 
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
-            }
-        }
-
-        .b-example-divider {
-            width: 100%;
-            height: 3rem;
-            background-color: rgba(0, 0, 0, .1);
-            border: solid rgba(0, 0, 0, .15);
-            border-width: 1px 0;
-            box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
-        }
-
-        .b-example-vr {
-            flex-shrink: 0;
-            width: 1.5rem;
-            height: 100vh;
-        }
-
-        .bi {
-            vertical-align: -.125em;
-            fill: currentColor;
-        }
-
-        .nav-scroller {
-            position: relative;
-            z-index: 2;
-            height: 2.75rem;
-            overflow-y: hidden;
-        }
-
-        .nav-scroller .nav {
-            display: flex;
-            flex-wrap: nowrap;
-            padding-bottom: 1rem;
-            margin-top: -1px;
-            overflow-x: auto;
-            text-align: center;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .btn-bd-primary {
-            --bd-violet-bg: #712cf9;
-            --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
-
-            --bs-btn-font-weight: 600;
-            --bs-btn-color: var(--bs-white);
-            --bs-btn-bg: var(--bd-violet-bg);
-            --bs-btn-border-color: var(--bd-violet-bg);
-            --bs-btn-hover-color: var(--bs-white);
-            --bs-btn-hover-bg: #6528e0;
-            --bs-btn-hover-border-color: #6528e0;
-            --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
-            --bs-btn-active-color: var(--bs-btn-hover-color);
-            --bs-btn-active-bg: #5a23c8;
-            --bs-btn-active-border-color: #5a23c8;
-        }
-
-        .bd-mode-toggle {
-            z-index: 1500;
-        }
-
-        .bd-mode-toggle .dropdown-menu .active .bi {
-            display: block !important;
-        }
-    </style>
-
-    <link href="sidebars.css" rel="stylesheet">
-</head>
-
-<body>
-
+  <body>
     <main class="d-flex flex-nowrap">
-        <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark b-example-vr" style="width: 280px;">
-            <ul class="nav nav-pills flex-column mb-auto">
-                <li class="nav-item">
-                    <a href="#" class="nav-link active" aria-current="page">
-                        <svg class="bi pe-none me-2" width="16" height="16">
-                            <use xlink:href="#home" />
-                        </svg>
-                        Test Sorting
-                    </a>
-                </li>
-            </ul>
+      <!-- Sidebar -->
+      <div
+        class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark b-example-vr"
+        style="width: 280px"
+      >
+        <ul class="nav nav-pills flex-column mb-auto">
+          <li class="nav-item">
+            <a
+              href="#"
+              class="nav-link active"
+              aria-current="page"
+              onclick="showContent('sorting')"
+            >
+              Test Sorting
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="nav-link text-white"
+              onclick="showContent('rtc')"
+            >
+              Generate RTC QR
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <script>
+        function showContent(contentType) {
+          const sortingContent = document.getElementById("sortingContent");
+          const rtcContent = document.getElementById("rtcContent");
+
+          const sortingLink = document.querySelector(
+            '.nav-link[onclick*="sorting"]'
+          );
+          const rtcLink = document.querySelector('.nav-link[onclick*="rtc"]');
+
+          if (contentType === "sorting") {
+            sortingContent.style.display = "block";
+            rtcContent.style.display = "none";
+
+            sortingLink.classList.add("active");
+            sortingLink.classList.remove("text-white");
+
+            rtcLink.classList.remove("active");
+            rtcLink.classList.add("text-white");
+          } else if (contentType === "rtc") {
+            sortingContent.style.display = "none";
+            rtcContent.style.display = "block";
+
+            rtcLink.classList.add("active");
+            rtcLink.classList.remove("text-white");
+
+            sortingLink.classList.remove("active");
+            sortingLink.classList.add("text-white");
+          }
+        }
+
+        function sortAndDisplay() {
+          const inputText = document.getElementById("inputText").value;
+          const outputTextElement = document.getElementById("outputText");
+
+          if (inputText.trim() === "") {
+            outputTextElement.value = "";
+            return;
+          }
+
+          const inputArray = inputText.split("\n"); // Split by newlines
+          const trimmedArray = inputArray.map((item) => item.trim());
+
+          trimmedArray.sort((a, b) => a.localeCompare(b, "en"));
+
+          outputTextElement.value = trimmedArray.join("\n"); // Join with newlines
+        }
+
+        function generateRTCQR() {
+          if (typeof QRCode === "undefined") {
+            alert("QRCode.js library is not loaded.");
+            return;
+          }
+
+          const rtcUniqueNo = document.getElementById("rtcUniqueNo").value;
+          const rtcExpireDate = document.getElementById("rtcExpireDate").value;
+          const rtcQROutput = document.getElementById("rtcQROutput");
+
+          if (rtcUniqueNo.trim() === "") {
+            alert("Please enter RTC Unique No.");
+            return;
+          }
+
+          if (rtcExpireDate.trim() === "") {
+            alert("Please enter expire date.");
+            return;
+          }
+
+          try {
+            const formattedExpireDate = formatRTCDateTime(rtcExpireDate);
+
+            const rtcQRData = `01020307${rtcUniqueNo.length
+              .toString()
+              .padStart(2, "0")}${rtcUniqueNo}11${formattedExpireDate.length
+              .toString()
+              .padStart(2, "0")}${formattedExpireDate}`;
+
+            document.getElementById("rtcQRData").textContent = rtcQRData;
+
+            rtcQROutput.innerHTML = "";
+
+            new QRCode(rtcQROutput, {
+              text: rtcQRData,
+              width: 256,
+              height: 256,
+            });
+          } catch (error) {
+            alert(error);
+          }
+        }
+
+        function formatRTCDateTime(dateTimeStr) {
+          const date = new Date(dateTimeStr);
+          if (isNaN(date.getTime())) {
+            throw new Error(
+              "Invalid date format (sample data 2025-01-25 23:59:59.999 +0700)"
+            );
+          }
+
+          const pad = (num) => num.toString().padStart(2, "0");
+          const DD = pad(date.getDate());
+          const MM = pad(date.getMonth() + 1); // Month is zero-based
+          const YYYY = date.getFullYear();
+          const HH = pad(date.getHours());
+          const mm = pad(date.getMinutes());
+          const SS = pad(date.getSeconds());
+
+          return `${DD}${MM}${YYYY}${HH}${mm}${SS}`;
+        }
+      </script>
+
+      <!-- Main Content Area -->
+      <div class="container-fluid px-4 py-3" id="contentArea">
+        <!-- Default content (Test Sorting) -->
+        <div id="sortingContent">
+          <div class="col-8">
+            <label for="inputText">Enter Text (one item per line):</label>
+          </div>
+
+          <div class="col-md-4">
+            <textarea
+              class="form-control"
+              rows="8"
+              id="inputText"
+              name="inputText"
+            ></textarea>
+            <br />
+          </div>
+
+          <div class="col-12">
+            <button class="btn btn-primary" onclick="sortAndDisplay()">
+              Sort</button
+            ><br /><br />
+          </div>
+
+          <div class="col-8">
+            <label for="outputText">Sorted Text:</label>
+          </div>
+
+          <div class="col-md-4">
+            <textarea
+              class="form-control"
+              rows="8"
+              id="outputText"
+              name="outputText"
+              disabled
+              readonly
+            ></textarea>
+          </div>
         </div>
 
-        <script>
-            function sortAndDisplay() {
-                const inputText = document.getElementById("inputText").value;
-                const outputTextElement = document.getElementById("outputText");
+        <!-- Gen RTC QR Content (hidden by default) -->
+        <div id="rtcContent" style="display: none">
+          <div class="col-8">
+            <label for="rtcInput">RTC Unique no:</label>
+          </div>
 
-                if (inputText.trim() === "") {
-                    outputTextElement.value = "";
-                    return;
-                }
+          <div class="col-md-2">
+            <input class="form-control" id="rtcUniqueNo" />
+            <br />
+          </div>
 
-                const inputArray = inputText.split("\n"); // Split by newlines
-                const trimmedArray = inputArray.map(item => item.trim());
+          <div class="col-8">
+            <label for="rtcInput">Expire date:</label>
+          </div>
 
-                trimmedArray.sort((a, b) => a.localeCompare(b, 'en'));
+          <div class="col-md-2">
+            <input class="form-control" id="rtcExpireDate" />
+            <br />
+          </div>
 
-                outputTextElement.value = trimmedArray.join("\n"); // Join with newlines
-            }
-        </script>
+          <div class="col-12">
+            <button class="btn btn-primary" onclick="generateRTCQR()">
+              Generate QR Code</button
+            ><br /><br />
+          </div>
 
-        <div class="container-fluid px-4 py-3">
-            <div class="col-8">
-                <label for="inputText">Enter Text (one item per line):</label>
-            </div>
+          <div class="col-8">
+            <label for="qrOutput">Generated QR Code:</label>
+            <br /><br />
+          </div>
 
-            <div class="col-md-4">
-                <textarea class="form-control" rows="8" id="inputText" name="inputText"></textarea>
-                <br>
-            </div>
+          <div class="col-md-4">
+            <div id="rtcQROutput"></div>
+          </div>
 
-            <div class="col-12">
-                <button class="btn btn-primary" onclick="sortAndDisplay()">Sort</button><br><br>
-            </div>
-
-            <div class="col-8">
-                <label for="outputText">Sorted Text:</label>                
-            </div>
-
-            <div class="col-md-4">
-                <textarea class="form-control" rows="8" id="outputText" name="outputText" disabled readonly></textarea>
-            </div>
+          <div class="col-8">
+            <label id="rtcQRData"></label>
+          </div>
         </div>
+      </div>
     </main>
 
     <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="css/sidebars.js"></script>
-</body>
-</body>
-
+  </body>
 </html>
