@@ -1,245 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Playground</title>
 
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"
-    />
-    <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet" />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Playground</title>
 
-    <link href="css/sidebars.css" rel="stylesheet" />
-    <link href="css/custom.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3" />
+  <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-    <script src="js/qrcode.min.js"></script>
-  </head>
+  <link href="css/sidebars.css" rel="stylesheet" />
+  <link href="css/custom.css" rel="stylesheet" />
 
-  <body>
-    <main class="d-flex flex-nowrap">
-      <!-- Sidebar -->
-      <div
-        class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark b-example-vr"
-        style="width: 280px"
-      >
-        <ul class="nav nav-pills flex-column mb-auto">
-          <li class="nav-item">
-            <a
-              href="#"
-              class="nav-link active"
-              aria-current="page"
-              onclick="showContent('sorting')"
-            >
-              Test Sorting
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="nav-link text-white"
-              onclick="showContent('rtc')"
-            >
-              Generate RTC QR
-            </a>
-          </li>
-        </ul>
-      </div>
+  <script src="js/nav.js"></script>
+  <script src="js/qrcode.min.js"></script>
+  <script src="js/rtc.js"></script>
+  <script src="js/phraseProductTagData.js"></script>
+</head>
 
-      <script>
-        function showContent(contentType) {
-          const sortingContent = document.getElementById("sortingContent");
-          const rtcContent = document.getElementById("rtcContent");
+<body>
+  <main class="d-flex flex-nowrap">
+    <script>
+      function showContent(contentType) {
+        const contents = {};
+        contents["sorting"] = "sortingContent";
+        contents["rtc"] = "rtcContent";
+        contents["product-tag-data"] = "productTagContent";
 
-          const sortingLink = document.querySelector(
-            '.nav-link[onclick*="sorting"]'
+        setActiveTab(contents, contentType);
+      }
+
+      function callSortAndDisplay() {
+        const inputText = document.getElementById("inputText").value;
+        const outputTextElement = document.getElementById("outputText");
+
+        if (inputText.trim() === "") {
+          outputTextElement.value = "";
+          return;
+        }
+
+        const inputArray = inputText.split("\n"); // Split by newlines
+        const trimmedArray = inputArray.map((item) => item.trim());
+
+        trimmedArray.sort((a, b) => a.localeCompare(b, "en"));
+
+        outputTextElement.value = trimmedArray.join("\n"); // Join with newlines
+      }
+
+      function callGenerateRTCQR() {
+        if (typeof QRCode === "undefined") {
+          alert("QRCode.js library is not loaded.");
+          return;
+        }
+
+        const rtcUniqueNo = document.getElementById("rtcUniqueNo").value;
+        const rtcExpireDate = document.getElementById("rtcExpireDate").value;
+        const rtcQROutput = document.getElementById("rtcQROutput");
+
+        if (rtcUniqueNo.trim() === "") {
+          alert("Please enter RTC Unique No.");
+          return;
+        }
+
+        if (rtcExpireDate.trim() === "") {
+          alert("Please enter expire date.");
+          return;
+        }
+
+        try {
+          const rtcQRData = createRTCDataForGenerateQRCode(
+            rtcUniqueNo,
+            rtcExpireDate
           );
-          const rtcLink = document.querySelector('.nav-link[onclick*="rtc"]');
 
-          if (contentType === "sorting") {
-            sortingContent.style.display = "block";
-            rtcContent.style.display = "none";
+          document.getElementById("rtcQRData").textContent = rtcQRData;
 
-            sortingLink.classList.add("active");
-            sortingLink.classList.remove("text-white");
+          rtcQROutput.innerHTML = "";
 
-            rtcLink.classList.remove("active");
-            rtcLink.classList.add("text-white");
-          } else if (contentType === "rtc") {
-            sortingContent.style.display = "none";
-            rtcContent.style.display = "block";
+          new QRCode(rtcQROutput, {
+            text: rtcQRData,
+            width: 256,
+            height: 256,
+          });
+        } catch (error) {
+          alert(error);
+        }
+      }
 
-            rtcLink.classList.add("active");
-            rtcLink.classList.remove("text-white");
+      function callPhraseProductTagData() {
+        const inputText = document.getElementById("productTagData").value;
+        const productTagDataJsonOutput = document.getElementById(
+          "productTagDataJsonOutput"
+        );
 
-            sortingLink.classList.remove("active");
-            sortingLink.classList.add("text-white");
-          }
+        if (inputText.trim() === "") {
+          productTagDataJsonOutput.textContent = "";
+          return;
         }
 
-        function sortAndDisplay() {
-          const inputText = document.getElementById("inputText").value;
-          const outputTextElement = document.getElementById("outputText");
+        productTagDataJsonOutput.textContent = JSON.stringify(
+          phraseProductTag(inputText),
+          null,
+          2
+        );
+      }
+    </script>
 
-          if (inputText.trim() === "") {
-            outputTextElement.value = "";
-            return;
-          }
+    <!-- Sidebar -->
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark b-example-vr" style="width: 280px">
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+          <a href="#" class="nav-link active" onclick="showContent('sorting')">
+            Test Sorting
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link text-white" onclick="showContent('rtc')">
+            Generate RTC QR
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link text-white" onclick="showContent('product-tag-data')">
+            Phrase Product Tag data
+          </a>
+        </li>
+      </ul>
+    </div>
 
-          const inputArray = inputText.split("\n"); // Split by newlines
-          const trimmedArray = inputArray.map((item) => item.trim());
-
-          trimmedArray.sort((a, b) => a.localeCompare(b, "en"));
-
-          outputTextElement.value = trimmedArray.join("\n"); // Join with newlines
-        }
-
-        function generateRTCQR() {
-          if (typeof QRCode === "undefined") {
-            alert("QRCode.js library is not loaded.");
-            return;
-          }
-
-          const rtcUniqueNo = document.getElementById("rtcUniqueNo").value;
-          const rtcExpireDate = document.getElementById("rtcExpireDate").value;
-          const rtcQROutput = document.getElementById("rtcQROutput");
-
-          if (rtcUniqueNo.trim() === "") {
-            alert("Please enter RTC Unique No.");
-            return;
-          }
-
-          if (rtcExpireDate.trim() === "") {
-            alert("Please enter expire date.");
-            return;
-          }
-
-          try {
-            const formattedExpireDate = formatRTCDateTime(rtcExpireDate);
-
-            const rtcQRData = `01020307${rtcUniqueNo.length
-              .toString()
-              .padStart(2, "0")}${rtcUniqueNo}11${formattedExpireDate.length
-              .toString()
-              .padStart(2, "0")}${formattedExpireDate}`;
-
-            document.getElementById("rtcQRData").textContent = rtcQRData;
-
-            rtcQROutput.innerHTML = "";
-
-            new QRCode(rtcQROutput, {
-              text: rtcQRData,
-              width: 256,
-              height: 256,
-            });
-          } catch (error) {
-            alert(error);
-          }
-        }
-
-        function formatRTCDateTime(dateTimeStr) {
-          const date = new Date(dateTimeStr);
-          if (isNaN(date.getTime())) {
-            throw new Error(
-              "Invalid date format (sample data 2025-01-25 23:59:59.999 +0700)"
-            );
-          }
-
-          const pad = (num) => num.toString().padStart(2, "0");
-          const DD = pad(date.getDate());
-          const MM = pad(date.getMonth() + 1); // Month is zero-based
-          const YYYY = date.getFullYear();
-          const HH = pad(date.getHours());
-          const mm = pad(date.getMinutes());
-          const SS = pad(date.getSeconds());
-
-          return `${DD}${MM}${YYYY}${HH}${mm}${SS}`;
-        }
-      </script>
-
-      <!-- Main Content Area -->
-      <div class="container-fluid px-4 py-3" id="contentArea">
-        <!-- Default content (Test Sorting) -->
-        <div id="sortingContent">
-          <div class="col-8">
-            <label for="inputText">Enter Text (one item per line):</label>
-          </div>
-
-          <div class="col-md-4">
-            <textarea
-              class="form-control"
-              rows="8"
-              id="inputText"
-              name="inputText"
-            ></textarea>
-            <br />
-          </div>
-
-          <div class="col-12">
-            <button class="btn btn-primary" onclick="sortAndDisplay()">
-              Sort</button
-            ><br /><br />
-          </div>
-
-          <div class="col-8">
-            <label for="outputText">Sorted Text:</label>
-          </div>
-
-          <div class="col-md-4">
-            <textarea
-              class="form-control"
-              rows="8"
-              id="outputText"
-              name="outputText"
-              disabled
-              readonly
-            ></textarea>
-          </div>
+    <!-- Main Content Area -->
+    <div class="container-fluid px-4 py-3" id="contentArea">
+      <!-- Default content (Test Sorting) -->
+      <div id="sortingContent">
+        <div class="col-8">
+          <label for="inputText">Enter Text (one item per line):</label>
         </div>
 
-        <!-- Gen RTC QR Content (hidden by default) -->
-        <div id="rtcContent" style="display: none">
-          <div class="col-8">
-            <label for="rtcInput">RTC Unique no:</label>
-          </div>
+        <div class="col-md-4">
+          <textarea class="form-control" rows="8" id="inputText" name="inputText"></textarea>
+          <br />
+        </div>
 
-          <div class="col-md-2">
-            <input class="form-control" id="rtcUniqueNo" />
-            <br />
-          </div>
+        <div class="col-12">
+          <button class="btn btn-primary" onclick="callSortAndDisplay()">
+            Sort</button><br /><br />
+        </div>
 
-          <div class="col-8">
-            <label for="rtcInput">Expire date:</label>
-          </div>
+        <div class="col-8">
+          <label for="outputText">Sorted Text:</label>
+        </div>
 
-          <div class="col-md-2">
-            <input class="form-control" id="rtcExpireDate" />
-            <br />
-          </div>
-
-          <div class="col-12">
-            <button class="btn btn-primary" onclick="generateRTCQR()">
-              Generate QR Code</button
-            ><br /><br />
-          </div>
-
-          <div class="col-8">
-            <label for="qrOutput">Generated QR Code:</label>
-            <br /><br />
-          </div>
-
-          <div class="col-md-4">
-            <div id="rtcQROutput"></div>
-          </div>
-
-          <div class="col-8">
-            <label id="rtcQRData"></label>
-          </div>
+        <div class="col-md-4">
+          <textarea class="form-control" rows="8" id="outputText" name="outputText" disabled readonly></textarea>
         </div>
       </div>
-    </main>
 
-    <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+      <!-- rtcContent -->
+      <div id="rtcContent" style="display: none">
+        <div class="col-8">
+          <label for="rtcInput">RTC Unique no:</label>
+        </div>
+
+        <div class="col-md-2">
+          <input class="form-control" id="rtcUniqueNo" />
+          <br />
+        </div>
+
+        <div class="col-8">
+          <label for="rtcInput">Expire date:</label>
+        </div>
+
+        <div class="col-md-2">
+          <input class="form-control" id="rtcExpireDate" />
+          <br />
+        </div>
+
+        <div class="col-12">
+          <button class="btn btn-primary" onclick="callGenerateRTCQR()">
+            Generate QR Code</button><br /><br />
+        </div>
+
+        <div class="col-8">
+          <label for="qrOutput">Generated QR Code:</label>
+          <br /><br />
+        </div>
+
+        <div class="col-md-4">
+          <div id="rtcQROutput"></div>
+        </div>
+
+        <div class="col-8">
+          <label id="rtcQRData"></label>
+        </div>
+      </div>
+
+      <!-- productTagContent -->
+      <div id="productTagContent" style="display: none">
+        <div class="col-8">
+          <label for="productTagDataInput">Product Tag Data:</label>
+        </div>
+
+        <div class="col-md-6">
+          <input class="form-control" id="productTagData" />
+          <br />
+        </div>
+
+        <div class="col-12">
+          <button class="btn btn-primary" onclick="callPhraseProductTagData()">
+            Phrase</button><br /><br />
+        </div>
+
+        <div class="col-8">
+          <label>Result:</label>
+          <br /><br />
+        </div>
+
+        <pre id="productTagDataJsonOutput"></pre>
+      </div>
+    </div>
+  </main>
+
+  <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
 </html>
